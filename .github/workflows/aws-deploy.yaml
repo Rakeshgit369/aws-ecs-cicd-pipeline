@@ -78,14 +78,6 @@ jobs:
             task-definition: task-defination.json
             container-name: weather-app
             image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
-
-        - name: Deploy to Amazon ECS
-          uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-          with:
-            task-definition: ${{ steps.task-def.outputs.task-definition }}
-            service: ${{ env.ECS_SERVICE }}
-            cluster: ${{ env.ECS_CLUSTER }}
-            wait-for-service-stability: true
             
         - name: Run Weather CLI on Fargate
           uses: aws-actions/amazon-ecs-deploy-task-definition@v2
