@@ -11,7 +11,7 @@ _Automated testing, Docker image delivery, and one-off execution of a Python wea
 - <a href="#architecture-and-workflow">Architecture and Workflow</a>
 - <a href="#tools-and-technologies">Tools and Technologies</a>
 - <a href="#project-structure">Project Structure</a>
-- <a href="#pipeline-execution-screenshots">Pipeline Execution Screenshots</a>
+- <a href="#pipeline-execution">Pipeline Execution</a>
 - <a href="#how-the-pipeline-works">How the Pipeline Works</a>
 - <a href="#run-locally">Run Locally</a>
 - <a href="#aws-configuration">AWS Configuration</a>
@@ -102,13 +102,13 @@ weather-app/
 
 The screenshot below shows the `test` job completing successfully, including Python setup, dependency installation, and the test step.
 
-![GitHub Actions test job succeeded](Images/Deploy jobs.png)
+![GitHub Actions test job succeeded](Images/Testjobs.png)
 
 ### 2. Deployment job
 
 The screenshot below shows the deployment job's steps completing successfully, including AWS credential configuration, identity verification, ECR login, image build/push, task-definition update, and the Fargate task action.
 
-![GitHub Actions deploy job succeeded](Images/Test jobs.png)
+![GitHub Actions deploy job succeeded](Images/Deployjobs.png)
 
 > A successful GitHub Actions job confirms that the workflow action completed successfully. For end-to-end validation, also check the latest ECS task's container exit code and verify the actual application output. The screenshots above do not by themselves prove that weather data was returned successfully.
 
