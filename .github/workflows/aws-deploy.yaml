@@ -11,6 +11,8 @@ env:
   ECS_CLUSTER: weather-app-cluster
   ECS_SERVICE: weather-app-service
   ECS_TASK_DEFINATION: weather-app-task-defination
+  ECS_SUBNETS: user-subnet
+  ECS_SECURITY_GROUPS: user-security-group
 
 jobs:
   test:
@@ -38,10 +40,11 @@ jobs:
         - name: Checkout Code
           uses: actions/checkout@v3
 
-        - name:  Configure AWS credentials using OIDC
-          uses: aws-actions/configure-aws-credentials@v6
+        - name: Configure AWS credentials
+          uses: aws-actions/configure-aws-credentials@v1
           with:
-            role-to-assume: arn:aws:iam::953652929659:user/GitHubActions-ECS-Deploy
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             aws-region: ${{ env.AWS_REGION }}
 
         - name: Login to Amazon ECR
@@ -77,3 +80,17 @@ jobs:
             service: ${{ env.ECS_SERVICE }}
             cluster: ${{ env.ECS_CLUSTER }}
             wait-for-service-stability: true
+            
+        - name: Run Weather CLI on Fargate
+          uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+          with:
+            task-definition: ${{ steps.task-def.outputs.task-definition }}
+            cluster: ${{ env.ECS_CLUSTER }}
+            run-task: true
+            run-task-launch-type: FARGATE
+            run-task-subnets: ${{ vars.ECS_SUBNETS }}
+            run-task-security-groups: ${{ vars.ECS_SECURITY_GROUPS }}
+            run-task-assign-public-IP: ENABLED
+            run-task-container-overrides: >-
+              [{"name":"weather-app","command":["sh","-c","printf '%s\\n' 'Hyderabad' | python -m src.main"]}]
+            wait-for-task-stopped: true
